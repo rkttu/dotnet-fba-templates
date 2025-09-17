@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <PackageId>DotNet.FBA.Templates</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Title>.NET File-based App Templates</Title>
+    <Authors>Jung Hyun Nam</Authors>
+    <Description>A template NuGet package for creating new file-based app projects in .NET 10+. This template helps you quickly write file-based application code.</Description>
+    <PackageTags>dotnet-new;templates;fba;file-based-app;csharp</PackageTags>
+    <PackageProjectUrl>https://github.com/rkttu/dotnet-fba-templates</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rkttu/dotnet-fba-templates</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="FbaApp.csproj" />
+    <Content Include="Program.cs" />
+    <Content Include=".template.config\template.json" />
+    <Compile Remove="**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

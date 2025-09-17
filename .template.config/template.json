@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json.schemastore.org/template",
+  "author": "Jung Hyun Nam",
+  "classifications": [
+    "Console",
+    "File-based App"
+  ],
+  "name": "File-based App",
+  "identity": "DotNet.FBA.CSharp",
+  "groupIdentity": "DotNet.FBA",
+  "shortName": "fba",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "FbaApp",
+  "preferNameDirectory": true,
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            ".git/**",
+            "bin/**",
+            "obj/**",
+            "*.nuspec",
+            "FbaTemplates.csproj",
+            ".template.config/**"
+          ]
+        }
+      ]
+    }
+  ],
+  "symbols": {
+    "TargetFramework": {
+      "type": "parameter",
+      "description": "The target framework for the project.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net10.0",
+          "description": "Target .NET 10"
+        },
+        {
+          "choice": "net9.0",
+          "description": "Target .NET 9"
+        },
+        {
+          "choice": "net8.0",
+          "description": "Target .NET 8"
+        }
+      ],
+      "defaultValue": "net10.0",
+      "replaces": "net10.0"
+    },
+    "SkipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    }
+  },
+  "primaryOutputs": [
+    {
+      "path": "FbaApp.csproj"
+    }
+  ],
+  "postActions": [
+    {
+      "condition": "(!SkipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [
+        {
+          "text": "Run 'dotnet restore'"
+        }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}
