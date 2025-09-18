@@ -14,10 +14,10 @@
     "symbols": {
         "Framework": {
             "type": "parameter",
-            "description": "The target framework for the project (e.g., net10.0, net9.0, net8.0).",
+            "description": "The target framework for the project (e.g., net10.0, net9.0, net8.0). Leave empty to use the latest available.",
             "datatype": "string",
-            "defaultValue": "net10.0",
-            "replaces": "NET_TFM"
+            "defaultValue": "",
+            "replaces": "NET_TFM_PARAM"
         },
         "EnableAot": {
             "type": "parameter",

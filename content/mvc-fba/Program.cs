@@ -3,7 +3,9 @@
 // Run with dotnet run --no-cache MvcTest.cs
 
 #:sdk Microsoft.NET.Sdk.Web
-#:property TargetFramework=NET_TFM
+#if (Framework != "")
+#:property TargetFramework=NET_TFM_PARAM
+#endif
 #if (EnableAot)
 #:property PublishAot=True
 #else

@@ -14,10 +14,10 @@
     "symbols": {
         "Framework": {
             "type": "parameter",
-            "description": "The target framework for the project (e.g., net10.0-browser, net9.0-browser).",
+            "description": "The target framework for the project (e.g., net10.0-browser, net9.0-browser). Leave empty to use the latest available.",
             "datatype": "string",
-            "defaultValue": "net10.0-browser",
-            "replaces": "NET_TFM_BROWSER"
+            "defaultValue": "",
+            "replaces": "NET_TFM_PARAM"
         },
         "EnableAot": {
             "type": "parameter",

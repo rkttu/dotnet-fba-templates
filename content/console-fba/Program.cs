@@ -1,6 +1,8 @@
 #!/usr/bin/env dotnet
 
-#:property TargetFramework=NET_TFM
+#if (Framework != "")
+#:property TargetFramework=NET_TFM_PARAM
+#endif
 
 // You can use AOT compilation by changing PublishAot to True.
 // Please note that AOT compilation may break some functionalities like reflection.

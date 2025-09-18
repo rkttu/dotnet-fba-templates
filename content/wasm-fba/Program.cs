@@ -4,7 +4,9 @@
 
 #:property OverrideHtmlAssetPlaceholders=true
 #:property AllowUnsafeBlocks=true
-#:property TargetFramework=NET_TFM_BROWSER
+#if (Framework != "")
+#:property TargetFramework=NET_TFM_PARAM
+#endif
 
 // WebAssembly compilation cannot use NativeAOT compilation.
 #:property PublishAot=False
