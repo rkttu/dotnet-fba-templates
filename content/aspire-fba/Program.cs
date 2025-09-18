@@ -1,4 +1,4 @@
-# !/usr/bin/env dotnet
+#!/usr/bin/env dotnet
 
 #:sdk Microsoft.NET.Sdk
 #:sdk Aspire.AppHost.Sdk@9.4.2
@@ -11,7 +11,6 @@
 // The UserSecretsId is used to store sensitive information during development.
 // Please change this GUID using generator and ensure this ID is unique to your project.
 #:property UserSecretsId=7BD6F9B6-0150-4BD5-B50B-165F5F5B3045
-#:property PublishAot=False
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;

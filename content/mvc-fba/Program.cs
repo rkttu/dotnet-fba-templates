@@ -3,6 +3,9 @@
 // Run with dotnet run --no-cache MvcTest.cs
 
 #:sdk Microsoft.NET.Sdk.Web
+#:property RootNamespace=MyApp
+#:property EnableDefaultItems=True
+#:property EnableDefaultCompileItems=True
 #if (Framework != "")
 #:property TargetFramework=NET_TFM_PARAM
 #endif

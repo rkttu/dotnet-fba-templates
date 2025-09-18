@@ -1,5 +1,0 @@
-<Project>
-    <ItemGroup>
-        <Compile Include="**/*.cs" />
-    </ItemGroup>
-</Project>

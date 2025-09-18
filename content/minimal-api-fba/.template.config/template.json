@@ -1,7 +1,7 @@
 {
     "$schema": "http://json.schemastore.org/template",
     "author": "rkttu",
-    "classifications": [ "Web", "ASP.NET", "Minimal API", "File-based App" ],
+    "classifications": [ "Web", "ASP.NET", "Minimal API", "FBA" ],
     "identity": "minimal-api-fba",
     "name": "Minimal API (File-based App)",
     "shortName": "minimal-api-fba",

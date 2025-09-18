@@ -1,11 +1,15 @@
-# !/usr/bin/env dotnet
+#!/usr/bin/env dotnet
 
 #:sdk Microsoft.NET.Sdk.Web
 #:package ModelContextProtocol@0.3.0-preview.4
 
 // You can use AOT compilation by changing PublishAot to True.
 // Please note that AOT compilation may break some functionalities like reflection.
+#if (EnableAot)
+#:property PublishAot=True
+#else
 #:property PublishAot=False
+#endif
 
 // NOTE: The dotnet run .cs command may not allow multiple clients to use this MCP server simultaneously.
 using System.ComponentModel;

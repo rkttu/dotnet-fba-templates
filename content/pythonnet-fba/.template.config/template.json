@@ -1,7 +1,7 @@
 {
     "$schema": "http://json.schemastore.org/template",
     "author": "rkttu",
-    "classifications": [ "Common", "Pythonnet", "File-based App" ],
+    "classifications": [ "Common", "Pythonnet", "FBA" ],
     "identity": "pythonnet-fba",
     "name": "Pythonnet (File-based App)",
     "shortName": "pythonnet-fba",
@@ -18,12 +18,6 @@
             "datatype": "string",
             "defaultValue": "net10.0",
             "replaces": "NET_TFM"
-        },
-        "EnableAot": {
-            "type": "parameter",
-            "description": "Enable AOT compilation (Note: Pythonnet requires DLR; Cannot use Native AOT)",
-            "datatype": "bool",
-            "defaultValue": "false"
         }
     }
 }

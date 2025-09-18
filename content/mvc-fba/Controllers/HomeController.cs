@@ -6,10 +6,10 @@ public sealed class HomeController : Controller
 {
     public IActionResult Index()
     {
-        ViewData["Message"] = "Minimal API와 MVC 컨트롤러가 함께 동작 중입니다!";
+        ViewData["Message"] = "Minimal API and MVC controllers working together!";
         return View();
     }
 
     public IActionResult About()
-        => Content("이 페이지는 Home/About 액션에서 렌더링되었습니다.");
+        => Content("This page was rendered from the Home/About action.");
 }
