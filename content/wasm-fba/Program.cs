@@ -4,6 +4,7 @@
 
 #:property OverrideHtmlAssetPlaceholders=true
 #:property AllowUnsafeBlocks=true
+#:property TargetFramework=net10.0-browser
 
 // WebAssembly compilation cannot use NativeAOT compilation.
 #:property PublishAot=False
