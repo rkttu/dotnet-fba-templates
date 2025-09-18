@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "rkttu",
+    "classifications": [ "Common", "Console", "File-based App" ],
+    "identity": "console-fba",
+    "name": "Console (File-based App)",
+    "shortName": "console-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": false,
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "rkttu",
+    "classifications": [ "Common", "Rundll32", "File-based App" ],
+    "identity": "win32rundll-fba",
+    "name": "Win32 RunDLL32 (File-based App)",
+    "shortName": "win32rundll-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": false,
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    }
+}

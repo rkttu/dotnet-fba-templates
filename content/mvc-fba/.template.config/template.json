@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "rkttu",
+    "classifications": [ "Common", "MVC", "File-based App" ],
+    "identity": "mvc-fba",
+    "name": "ASP.NET Core WebApp (Model-View-Controller, File-based App)",
+    "shortName": "mvc-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": false,
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    }
+}

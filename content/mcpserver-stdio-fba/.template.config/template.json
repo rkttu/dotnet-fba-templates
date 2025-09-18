@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "rkttu",
+    "classifications": [ "Common", "MCP Server", "Stdio", "File-based App" ],
+    "identity": "mcpserver-stdio-fba",
+    "name": "MCP Server (Stdio Transport, File-based App)",
+    "shortName": "mcpserver-stdio-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": false,
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    }
+}

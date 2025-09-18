@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "rkttu",
+    "classifications": [ "Common", "Pythonnet", "File-based App" ],
+    "identity": "pythonnet-fba",
+    "name": "Pythonnet (File-based App)",
+    "shortName": "pythonnet-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": false,
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    }
+}

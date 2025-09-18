@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "rkttu",
+    "classifications": [ "Common", "WinForms", "File-based App" ],
+    "identity": "winforms-fba",
+    "name": "Windows Forms App (File-based App)",
+    "shortName": "winforms-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": false,
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    }
+}
