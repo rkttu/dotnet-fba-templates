@@ -6,9 +6,9 @@
     "name": ".NET Aspire AppHost (File-based App)",
     "shortName": "aspire-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

@@ -6,9 +6,9 @@
     "name": "Minimal API (File-based App)",
     "shortName": "minimal-api-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

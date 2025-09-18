@@ -6,9 +6,9 @@
     "name": "Win32 RunDLL32 (File-based App)",
     "shortName": "win32rundll-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

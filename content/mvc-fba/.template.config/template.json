@@ -6,9 +6,9 @@
     "name": "ASP.NET Core WebApp (Model-View-Controller, File-based App)",
     "shortName": "mvc-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

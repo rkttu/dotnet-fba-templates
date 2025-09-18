@@ -6,9 +6,9 @@
     "name": "Pythonnet (File-based App)",
     "shortName": "pythonnet-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

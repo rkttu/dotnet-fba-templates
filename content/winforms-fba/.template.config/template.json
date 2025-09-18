@@ -6,9 +6,9 @@
     "name": "Windows Forms App (File-based App)",
     "shortName": "winforms-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

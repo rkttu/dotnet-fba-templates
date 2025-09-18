@@ -6,9 +6,9 @@
     "name": "Win32 DLL (File-based App)",
     "shortName": "win32dll-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

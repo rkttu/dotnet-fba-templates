@@ -6,9 +6,9 @@
     "name": "MCP Server (Stdio Transport, File-based App)",
     "shortName": "mcpserver-stdio-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }

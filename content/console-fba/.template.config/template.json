@@ -6,9 +6,9 @@
     "name": "Console (File-based App)",
     "shortName": "console-fba",
     "sourceName": "Program",
-    "preferNameDirectory": false,
+    "preferNameDirectory": true,
     "tags": {
         "language": "C#",
-        "type": "item"
+        "type": "project"
     }
 }
