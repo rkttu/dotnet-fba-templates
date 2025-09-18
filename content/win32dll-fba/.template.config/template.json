@@ -10,5 +10,20 @@
     "tags": {
         "language": "C#",
         "type": "project"
+    },
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project (e.g., net10.0, net9.0, net8.0).",
+            "datatype": "string",
+            "defaultValue": "net10.0",
+            "replaces": "NET_TFM"
+        },
+        "EnableAot": {
+            "type": "parameter",
+            "description": "Enable AOT compilation",
+            "datatype": "bool",
+            "defaultValue": "true"
+        }
     }
 }

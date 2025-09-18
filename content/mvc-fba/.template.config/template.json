@@ -1,14 +1,29 @@
 {
     "$schema": "http://json.schemastore.org/template",
     "author": "rkttu",
-    "classifications": [ "Common", "MVC", "File-based App" ],
+    "classifications": [ "Web", "MVC", "File-based App" ],
     "identity": "mvc-fba",
-    "name": "ASP.NET Core WebApp (Model-View-Controller, File-based App)",
+    "name": "ASP.NET Core MVC (File-based App)",
     "shortName": "mvc-fba",
     "sourceName": "Program",
     "preferNameDirectory": true,
     "tags": {
         "language": "C#",
         "type": "project"
+    },
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project (e.g., net10.0, net9.0, net8.0).",
+            "datatype": "string",
+            "defaultValue": "net10.0",
+            "replaces": "NET_TFM"
+        },
+        "EnableAot": {
+            "type": "parameter",
+            "description": "Enable AOT compilation",
+            "datatype": "bool",
+            "defaultValue": "false"
+        }
     }
 }

@@ -10,5 +10,20 @@
     "tags": {
         "language": "C#",
         "type": "project"
+    },
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project (e.g., net10.0-browser, net9.0-browser).",
+            "datatype": "string",
+            "defaultValue": "net10.0-browser",
+            "replaces": "NET_TFM_BROWSER"
+        },
+        "EnableAot": {
+            "type": "parameter",
+            "description": "Enable AOT compilation (Note: WebAssembly cannot use NativeAOT)",
+            "datatype": "bool",
+            "defaultValue": "false"
+        }
     }
 }

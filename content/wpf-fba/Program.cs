@@ -3,7 +3,7 @@
 #:package CommunityToolkit.Mvvm@8.4.0
 
 #:property OutputType=WinExe
-#:property TargetFramework=net10.0-windows
+#:property TargetFramework=NET_TFM_WINDOWS
 #:property UseWPF=True
 #:property UseWindowsForms=False
 

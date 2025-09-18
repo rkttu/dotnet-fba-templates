@@ -10,5 +10,20 @@
     "tags": {
         "language": "C#",
         "type": "project"
+    },
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project (e.g., net10.0-windows, net9.0-windows, net8.0-windows).",
+            "datatype": "string",
+            "defaultValue": "net10.0-windows",
+            "replaces": "NET_TFM_WINDOWS"
+        },
+        "EnableAot": {
+            "type": "parameter",
+            "description": "Enable AOT compilation (Note: WPF cannot use NativeAOT)",
+            "datatype": "bool",
+            "defaultValue": "false"
+        }
     }
 }

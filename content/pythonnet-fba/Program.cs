@@ -1,3 +1,4 @@
+#:property TargetFramework=NET_TFM
 #:package pythonnet@3.0.5
 
 // Pythonnet requires DLR; Cannot use Native AOT.

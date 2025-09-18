@@ -3,12 +3,27 @@
     "author": "rkttu",
     "classifications": [ "Common", "WinForms", "File-based App" ],
     "identity": "winforms-fba",
-    "name": "Windows Forms App (File-based App)",
+    "name": "Windows Forms Application (File-based App)",
     "shortName": "winforms-fba",
     "sourceName": "Program",
     "preferNameDirectory": true,
     "tags": {
         "language": "C#",
         "type": "project"
+    },
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project (e.g., net10.0-windows, net9.0-windows, net8.0-windows).",
+            "datatype": "string",
+            "defaultValue": "net10.0-windows",
+            "replaces": "NET_TFM_WINDOWS"
+        },
+        "EnableAot": {
+            "type": "parameter",
+            "description": "Enable AOT compilation (Note: Windows Forms cannot use NativeAOT)",
+            "datatype": "bool",
+            "defaultValue": "false"
+        }
     }
 }

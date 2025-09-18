@@ -3,7 +3,12 @@
 // Run with dotnet run --no-cache MvcTest.cs
 
 #:sdk Microsoft.NET.Sdk.Web
+#:property TargetFramework=NET_TFM
+#if (EnableAot)
+#:property PublishAot=True
+#else
 #:property PublishAot=False
+#endif
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
