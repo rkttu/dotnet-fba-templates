@@ -79,17 +79,17 @@ jobs:
         # Test console-fba template
         echo "Testing console-fba template..."
         dotnet new console-fba --name TestConsole
-        test -f TestConsole.cs || (echo "console-fba template failed" && exit 1)
+        test -f TestConsole/TestConsole.cs || (echo "console-fba template failed" && exit 1)
         
         # Test aspire-fba template
         echo "Testing aspire-fba template..."
         dotnet new aspire-fba --name TestAspire
-        test -f TestAspire.cs || (echo "aspire-fba template failed" && exit 1)
+        test -f TestAspire/TestAspire.cs || (echo "aspire-fba template failed" && exit 1)
         
         # Test minimal-api-fba template
         echo "Testing minimal-api-fba template..."
         dotnet new minimal-api-fba --name TestMinimalApi
-        test -f TestMinimalApi.cs || (echo "minimal-api-fba template failed" && exit 1)
+        test -f TestMinimalApi/TestMinimalApi.cs || (echo "minimal-api-fba template failed" && exit 1)
         
         cd ..
         rm -rf test-templates
