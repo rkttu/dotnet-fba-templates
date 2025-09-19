@@ -1,12 +1,21 @@
 # dotnet-fba-templates
 
 [![NuGet](https://img.shields.io/nuget/v/FbaTemplates.svg)](https://www.nuget.org/packages/FbaTemplates/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/FbaTemplates.svg)](https://www.nuget.org/packages/FbaTemplates/)
+[![Build and Test](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/ci-cd.yml)
+[![Release](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/release.yml/badge.svg)](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/release.yml)
+[![GitHub Stars](https://img.shields.io/github/stars/rkttu/dotnet-fba-templates?style=social)](https://github.com/rkttu/dotnet-fba-templates/stargazers)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/rkttu/dotnet-fba-templates/blob/main/README.md#contributing)
 
 A collection of .NET project templates for creating **File-based Applications (FBA)** - simple C# console applications that can be executed directly without traditional project files using the `dotnet` command-line interface.
 
+> 💡 **Love this project?** Give it a ⭐ and consider [contributing](https://github.com/rkttu/dotnet-fba-templates/blob/main/README.md#contributing) to help make File-based Applications even better!
+
 ## What are File-based Applications?
 
-File-based Applications (FBA) are a modern approach to creating simple C# console applications that leverage the power of .NET's top-level programs and the `dotnet` CLI. These applications consist of a single `.cs` file that can be executed directly using `dotnet run` or `dotnet <filename>.cs`, without the need for a traditional `.csproj` project file.
+File-based Applications (FBA) are a modern approach to creating simple C# console applications that leverage the power of .NET's top-level programs and the enhanced `dotnet` CLI capabilities in .NET 10.0+. These applications consist of a single `.cs` file that can be executed directly using `dotnet run` or `dotnet <filename>.cs`, without the need for a traditional `.csproj` project file.
+
+> **⚠️ Important**: File-based Applications require .NET 10.0 or later for optimal functionality and feature support.
 
 ### Key Benefits
 
@@ -19,11 +28,19 @@ File-based Applications (FBA) are a modern approach to creating simple C# consol
 
 ## Installation
 
+**Prerequisites**: Ensure you have .NET 10.0 or later installed. Check with:
+
+```bash
+dotnet --version
+```
+
 Install the template package globally using the .NET CLI:
 
 ```bash
 dotnet new install FbaTemplates
 ```
+
+> **💡 Tip**: If you encounter compatibility issues, verify you're running .NET 10.0+ as this template package is specifically designed for the latest .NET features.
 
 ## Available Templates
 
@@ -139,11 +156,27 @@ app.Run();
 
 ## Requirements
 
-- .NET 10.0+
-- dotnet CLI
+### ⚠️ Important: .NET Version Requirement
+
+**This template package requires .NET 10.0 or later.** File-based Applications leverage the latest .NET features and the enhanced `dotnet` CLI capabilities available only in .NET 10.0+.
+
+### System Requirements
+
+- **✅ .NET 10.0 or later** (Required)
+- **✅ dotnet CLI** (Included with .NET SDK)
 - Platform-specific requirements:
-  - Windows: Windows 10 or later for desktop applications
-  - Linux/macOS: Compatible with .NET runtime
+  - **Windows**: Windows 10 or later for desktop applications
+  - **Linux/macOS**: Compatible with .NET 10.0+ runtime
+
+### Verification
+
+To check your .NET version:
+
+```bash
+dotnet --version
+```
+
+If you need to install .NET 10.0, visit: [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
 
 ## Editor Support
 
@@ -181,9 +214,11 @@ No additional configuration is required. The extensions automatically recognize 
 
 Most templates support the following parameters:
 
-- `--Framework` or `-F`: Target framework (net10.0)
+- `--Framework` or `-F`: Target framework (net10.0 - default and recommended)
 - `--EnableAot`: Enable AOT compilation (true/false)
 - `--name` or `-n`: Name of the application
+
+**Note**: All templates are optimized for .NET 10.0 and may not work correctly with earlier versions.
 
 Example:
 
@@ -193,7 +228,22 @@ dotnet new console-fba -n MyApp --EnableAot true
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
+We actively welcome contributions and feedback from the community! 🎉 Whether you're a seasoned developer or just getting started with File-based Applications, your input helps make this project better for everyone.
+
+### How You Can Help
+
+- 🐛 **Report bugs or issues** - Found something that doesn't work as expected?
+- 💡 **Suggest new features** - Have an idea for improving existing templates or adding new ones?
+- 📝 **Improve documentation** - Help us make the docs clearer and more comprehensive
+- 🔧 **Submit code contributions** - Fix bugs, add features, or create new templates
+- 💬 **Share feedback** - Tell us about your experience using File-based Applications
+- ⭐ **Star the repository** - Show your support and help others discover the project
+
+### Getting Started
+
+1. **Check existing issues** - See if someone else has already reported the same issue or requested a similar feature
+2. **Open a discussion** - Not sure if your idea fits? Start a discussion to get feedback from the community
+3. **Fork and contribute** - Ready to code? Fork the repository and start contributing!
 
 ### Adding New Templates
 
@@ -216,6 +266,14 @@ All new templates should follow these guidelines:
 - Provide AOT compilation option where applicable
 - Include clear, commented example code
 - Follow the existing naming convention ({category}-fba)
+
+### Community & Support
+
+- 💬 **Discussions**: Join our [GitHub Discussions](https://github.com/rkttu/dotnet-fba-templates/discussions) to ask questions, share ideas, or show off what you've built
+- 📋 **Issues**: Report bugs or request features in our [Issue Tracker](https://github.com/rkttu/dotnet-fba-templates/issues)
+- 🚀 **Showcase**: Built something cool with File-based Applications? We'd love to hear about it!
+
+We believe that File-based Applications can revolutionize how developers approach simple C# projects, and your feedback helps us achieve that vision. Every contribution, no matter how small, makes a difference! 🌟
 
 ## License
 
