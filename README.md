@@ -181,14 +181,14 @@ No additional configuration is required. The extensions automatically recognize 
 
 Most templates support the following parameters:
 
-- `--Framework` or `-F`: Target framework (net8.0, net9.0, net10.0)
+- `--Framework` or `-F`: Target framework (net10.0)
 - `--EnableAot`: Enable AOT compilation (true/false)
 - `--name` or `-n`: Name of the application
 
 Example:
 
 ```bash
-dotnet new console-fba -n MyApp --Framework net9.0 --EnableAot true
+dotnet new console-fba -n MyApp --EnableAot true
 ```
 
 ## Contributing

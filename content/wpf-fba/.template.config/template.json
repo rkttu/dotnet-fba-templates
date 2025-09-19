@@ -14,7 +14,7 @@
     "symbols": {
         "Framework": {
             "type": "parameter",
-            "description": "The target framework for the project (e.g., net10.0-windows, net9.0-windows, net8.0-windows).",
+            "description": "The target framework for the project (e.g., net10.0-windows).",
             "datatype": "string",
             "defaultValue": "net10.0-windows",
             "replaces": "NET_TFM_WINDOWS"
