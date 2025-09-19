@@ -99,13 +99,10 @@ jobs:
       run: dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --no-build --output ./artifacts
 
     - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.ref_name || format('release/v{0}', steps.get_version.outputs.VERSION) }}
-        release_name: Release v${{ steps.get_version.outputs.VERSION }}
+        name: Release v${{ steps.get_version.outputs.VERSION }}
         body: |
           ## File-based App Templates v${{ steps.get_version.outputs.VERSION }}
           
@@ -140,16 +137,7 @@ jobs:
           See the [README](https://github.com/rkttu/dotnet-fba-templates/blob/main/README.md) for more details.
         draft: false
         prerelease: false
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/FbaTemplates.${{ steps.get_version.outputs.VERSION }}.nupkg
-        asset_name: FbaTemplates.${{ steps.get_version.outputs.VERSION }}.nupkg
-        asset_content_type: application/zip
+        files: ./artifacts/FbaTemplates.${{ steps.get_version.outputs.VERSION }}.nupkg
 
     - name: Push to NuGet
       run: |
@@ -167,4 +155,4 @@ jobs:
         echo "- **Version**: ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Package**: FbaTemplates.${{ steps.get_version.outputs.VERSION }}.nupkg" >> $GITHUB_STEP_SUMMARY
         echo "- **NuGet**: https://www.nuget.org/packages/FbaTemplates/${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **GitHub Release**: ${{ steps.create_release.outputs.html_url }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **GitHub Release**: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name || format('release/v{0}', steps.get_version.outputs.VERSION) }}" >> $GITHUB_STEP_SUMMARY

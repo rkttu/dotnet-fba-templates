@@ -72,12 +72,12 @@ jobs:
         # Test console-fba template
         echo "Testing console-fba template..."
         dotnet new console-fba --name TestConsole
-        test -f TestConsole.cs || (echo "console-fba template failed" && exit 1)
+        test -f TestConsole/TestConsole.cs || (echo "console-fba template failed" && exit 1)
         
         # Test minimal-api-fba template
         echo "Testing minimal-api-fba template..."
         dotnet new minimal-api-fba --name TestMinimalApi
-        test -f TestMinimalApi.cs || (echo "minimal-api-fba template failed" && exit 1)
+        test -f TestMinimalApi/TestMinimalApi.cs || (echo "minimal-api-fba template failed" && exit 1)
         
         cd ..
         rm -rf test-templates
@@ -87,13 +87,10 @@ jobs:
       run: dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --no-build --output ./artifacts
 
     - name: Create GitHub Prerelease
-      id: create_prerelease
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.ref_name }}
-        release_name: Prerelease v${{ steps.get_version.outputs.PRERELEASE_VERSION }}
+        name: Prerelease v${{ steps.get_version.outputs.PRERELEASE_VERSION }}
         body: |
           ## File-based App Templates v${{ steps.get_version.outputs.PRERELEASE_VERSION }}
           
@@ -130,16 +127,7 @@ jobs:
           **Note**: This is a prerelease version. Please test thoroughly before using in production.
         draft: false
         prerelease: true
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-        asset_path: ./artifacts/FbaTemplates.${{ steps.get_version.outputs.PRERELEASE_VERSION }}.nupkg
-        asset_name: FbaTemplates.${{ steps.get_version.outputs.PRERELEASE_VERSION }}.nupkg
-        asset_content_type: application/zip
+        files: ./artifacts/FbaTemplates.${{ steps.get_version.outputs.PRERELEASE_VERSION }}.nupkg
 
     - name: Push to NuGet (Prerelease)
       run: |
@@ -157,5 +145,5 @@ jobs:
         echo "- **Version**: ${{ steps.get_version.outputs.PRERELEASE_VERSION }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Package**: FbaTemplates.${{ steps.get_version.outputs.PRERELEASE_VERSION }}.nupkg" >> $GITHUB_STEP_SUMMARY
         echo "- **NuGet**: https://www.nuget.org/packages/FbaTemplates/${{ steps.get_version.outputs.PRERELEASE_VERSION }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **GitHub Prerelease**: ${{ steps.create_prerelease.outputs.html_url }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **GitHub Prerelease**: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Status**: ⚠️ Prerelease - For testing only" >> $GITHUB_STEP_SUMMARY
