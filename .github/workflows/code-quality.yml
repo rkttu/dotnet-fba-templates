@@ -1,0 +1,114 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dotnet format
+      run: dotnet tool install -g dotnet-format
+
+    - name: Restore dependencies
+      run: dotnet restore FbaTemplates.csproj
+
+    - name: Check code formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic
+
+    - name: Run security scan with CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: csharp
+
+    - name: Build for analysis
+      run: dotnet build FbaTemplates.csproj --configuration Release
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+
+    - name: Validate template structure
+      run: |
+        # Check if all required template files exist
+        echo "Validating template structure..."
+        
+        # Check for template.json files in each template directory
+        for template_dir in content/*-fba/; do
+          if [ -d "$template_dir" ]; then
+            template_name=$(basename "$template_dir")
+            echo "Checking template: $template_name"
+            
+            # Check if template.json exists
+            if [ ! -f "$template_dir/.template.config/template.json" ]; then
+              echo "Warning: Missing template.json for $template_name"
+            else
+              echo "✓ $template_name has template.json"
+            fi
+            
+            # Check if Program.cs exists
+            if [ ! -f "$template_dir/Program.cs" ]; then
+              echo "Warning: Missing Program.cs for $template_name"
+            else
+              echo "✓ $template_name has Program.cs"
+            fi
+          fi
+        done
+
+    - name: Validate project metadata
+      run: |
+        # Check if all required NuGet package metadata is present
+        echo "Validating NuGet package metadata..."
+        
+        required_fields=("PackageId" "PackageVersion" "Title" "Authors" "Description" "PackageTags")
+        
+        for field in "${required_fields[@]}"; do
+          if grep -q "<$field>" FbaTemplates.csproj; then
+            echo "✓ $field is present"
+          else
+            echo "❌ Missing required field: $field"
+            exit 1
+          fi
+        done
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    name: Dependency Security Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore FbaTemplates.csproj
+
+    - name: Check for vulnerable packages
+      run: dotnet list package --vulnerable --include-transitive
+
+    - name: Check for deprecated packages
+      run: dotnet list package --deprecated
+
+    - name: Check for outdated packages
+      run: dotnet list package --outdated

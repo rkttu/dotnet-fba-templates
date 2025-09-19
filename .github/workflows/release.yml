@@ -1,0 +1,170 @@
+name: Release to NuGet
+
+on:
+  push:
+    tags:
+      - 'release/v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  PROJECT_FILE: 'FbaTemplates.csproj'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Release Package
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          # Extract version from tag (remove 'release/v' prefix)
+          VERSION=${GITHUB_REF#refs/tags/release/v}
+        fi
+        echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+        echo "Releasing version: ${VERSION}"
+
+    - name: Update project version
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        # Update version in project file
+        sed -i "s/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>${VERSION}<\/PackageVersion>/" ${{ env.PROJECT_FILE }}
+        sed -i "s/<AssemblyVersion>.*<\/AssemblyVersion>/<AssemblyVersion>${VERSION}<\/AssemblyVersion>/" ${{ env.PROJECT_FILE }}
+        sed -i "s/<FileVersion>.*<\/FileVersion>/<FileVersion>${VERSION}<\/FileVersion>/" ${{ env.PROJECT_FILE }}
+        
+        # Show updated project file
+        cat ${{ env.PROJECT_FILE }}
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_FILE }}
+
+    - name: Build project
+      run: dotnet build ${{ env.PROJECT_FILE }} --configuration Release --no-restore
+
+    - name: Run tests (template validation)
+      run: |
+        # Pack the package first
+        dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --no-build --output ./test-artifacts
+        
+        # Test template installation
+        dotnet new install ./test-artifacts/*.nupkg
+        
+        # List installed templates
+        echo "Installed templates:"
+        dotnet new list | grep -i fba
+        
+        # Test each template
+        mkdir -p test-templates
+        cd test-templates
+        
+        # Test console-fba template
+        echo "Testing console-fba template..."
+        dotnet new console-fba --name TestConsole
+        test -f TestConsole.cs || (echo "console-fba template failed" && exit 1)
+        
+        # Test aspire-fba template
+        echo "Testing aspire-fba template..."
+        dotnet new aspire-fba --name TestAspire
+        test -f TestAspire.cs || (echo "aspire-fba template failed" && exit 1)
+        
+        # Test minimal-api-fba template
+        echo "Testing minimal-api-fba template..."
+        dotnet new minimal-api-fba --name TestMinimalApi
+        test -f TestMinimalApi.cs || (echo "minimal-api-fba template failed" && exit 1)
+        
+        cd ..
+        rm -rf test-templates
+        dotnet new uninstall FbaTemplates
+
+    - name: Pack NuGet package
+      run: dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --no-build --output ./artifacts
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name || format('release/v{0}', steps.get_version.outputs.VERSION) }}
+        release_name: Release v${{ steps.get_version.outputs.VERSION }}
+        body: |
+          ## File-based App Templates v${{ steps.get_version.outputs.VERSION }}
+          
+          ### What's New
+          
+          This release includes templates for creating File-based Applications (FBA) in C#.
+          
+          ### Available Templates
+          - `console-fba` - Simple console application
+          - `aspire-fba` - .NET Aspire application
+          - `awscdk-fba` - AWS CDK application
+          - `mcpserver-stdio-fba` - Model Context Protocol server
+          - `minimal-api-fba` - Minimal API application
+          - `mvc-fba` - MVC web application
+          - `pythonnet-fba` - Python.NET integration
+          - `wasm-fba` - WebAssembly application
+          - `win32dll-fba` - Win32 DLL application
+          - `win32rundll-fba` - Win32 RunDLL application
+          - `winforms-fba` - Windows Forms application
+          - `wpf-fba` - WPF application
+          
+          ### Installation
+          ```bash
+          dotnet new install FbaTemplates::${{ steps.get_version.outputs.VERSION }}
+          ```
+          
+          ### Usage
+          ```bash
+          dotnet new console-fba --name MyApp
+          ```
+          
+          See the [README](https://github.com/rkttu/dotnet-fba-templates/blob/main/README.md) for more details.
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/FbaTemplates.${{ steps.get_version.outputs.VERSION }}.nupkg
+        asset_name: FbaTemplates.${{ steps.get_version.outputs.VERSION }}.nupkg
+        asset_content_type: application/zip
+
+    - name: Push to NuGet
+      run: |
+        dotnet nuget push ./artifacts/*.nupkg \
+          --api-key ${{ secrets.NUGET_API_KEY }} \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate \
+          --no-symbols
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Summary
+      run: |
+        echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Package**: FbaTemplates.${{ steps.get_version.outputs.VERSION }}.nupkg" >> $GITHUB_STEP_SUMMARY
+        echo "- **NuGet**: https://www.nuget.org/packages/FbaTemplates/${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **GitHub Release**: ${{ steps.create_release.outputs.html_url }}" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,161 @@
+name: Prerelease to NuGet
+
+on:
+  push:
+    tags:
+      - 'preview/v*.*.*'
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  PROJECT_FILE: 'FbaTemplates.csproj'
+
+jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+    name: Prerelease Package
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        # Extract version from tag (remove 'preview/v' prefix)
+        VERSION=${GITHUB_REF#refs/tags/preview/v}
+        PRERELEASE_VERSION="${VERSION}-preview"
+        echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+        echo "PRERELEASE_VERSION=${PRERELEASE_VERSION}" >> $GITHUB_OUTPUT
+        echo "Releasing prerelease version: ${PRERELEASE_VERSION}"
+
+    - name: Update project version
+      run: |
+        PRERELEASE_VERSION="${{ steps.get_version.outputs.PRERELEASE_VERSION }}"
+        # Update version in project file
+        sed -i "s/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>${PRERELEASE_VERSION}<\/PackageVersion>/" ${{ env.PROJECT_FILE }}
+        sed -i "s/<AssemblyVersion>.*<\/AssemblyVersion>/<AssemblyVersion>${{ steps.get_version.outputs.VERSION }}<\/AssemblyVersion>/" ${{ env.PROJECT_FILE }}
+        sed -i "s/<FileVersion>.*<\/FileVersion>/<FileVersion>${{ steps.get_version.outputs.VERSION }}<\/FileVersion>/" ${{ env.PROJECT_FILE }}
+        
+        # Show updated project file
+        echo "Updated project file:"
+        grep -A 5 -B 5 "PackageVersion\|AssemblyVersion\|FileVersion" ${{ env.PROJECT_FILE }}
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_FILE }}
+
+    - name: Build project
+      run: dotnet build ${{ env.PROJECT_FILE }} --configuration Release --no-restore
+
+    - name: Run tests (template validation)
+      run: |
+        # Pack the package first
+        dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --no-build --output ./test-artifacts
+        
+        # Test template installation
+        dotnet new install ./test-artifacts/*.nupkg
+        
+        # List installed templates
+        echo "Installed templates:"
+        dotnet new list | grep -i fba
+        
+        # Test key templates
+        mkdir -p test-templates
+        cd test-templates
+        
+        # Test console-fba template
+        echo "Testing console-fba template..."
+        dotnet new console-fba --name TestConsole
+        test -f TestConsole.cs || (echo "console-fba template failed" && exit 1)
+        
+        # Test minimal-api-fba template
+        echo "Testing minimal-api-fba template..."
+        dotnet new minimal-api-fba --name TestMinimalApi
+        test -f TestMinimalApi.cs || (echo "minimal-api-fba template failed" && exit 1)
+        
+        cd ..
+        rm -rf test-templates
+        dotnet new uninstall FbaTemplates
+
+    - name: Pack NuGet package
+      run: dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --no-build --output ./artifacts
+
+    - name: Create GitHub Prerelease
+      id: create_prerelease
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Prerelease v${{ steps.get_version.outputs.PRERELEASE_VERSION }}
+        body: |
+          ## File-based App Templates v${{ steps.get_version.outputs.PRERELEASE_VERSION }}
+          
+          ⚠️ **This is a prerelease version for testing purposes.**
+          
+          ### What's New
+          
+          This prerelease includes updates and new features for File-based Applications (FBA) templates.
+          
+          ### Available Templates
+          - `console-fba` - Simple console application
+          - `aspire-fba` - .NET Aspire application
+          - `awscdk-fba` - AWS CDK application
+          - `mcpserver-stdio-fba` - Model Context Protocol server
+          - `minimal-api-fba` - Minimal API application
+          - `mvc-fba` - MVC web application
+          - `pythonnet-fba` - Python.NET integration
+          - `wasm-fba` - WebAssembly application
+          - `win32dll-fba` - Win32 DLL application
+          - `win32rundll-fba` - Win32 RunDLL application
+          - `winforms-fba` - Windows Forms application
+          - `wpf-fba` - WPF application
+          
+          ### Installation
+          ```bash
+          dotnet new install FbaTemplates::${{ steps.get_version.outputs.PRERELEASE_VERSION }}
+          ```
+          
+          ### Usage
+          ```bash
+          dotnet new console-fba --name MyApp
+          ```
+          
+          **Note**: This is a prerelease version. Please test thoroughly before using in production.
+        draft: false
+        prerelease: true
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
+        asset_path: ./artifacts/FbaTemplates.${{ steps.get_version.outputs.PRERELEASE_VERSION }}.nupkg
+        asset_name: FbaTemplates.${{ steps.get_version.outputs.PRERELEASE_VERSION }}.nupkg
+        asset_content_type: application/zip
+
+    - name: Push to NuGet (Prerelease)
+      run: |
+        dotnet nuget push ./artifacts/*.nupkg \
+          --api-key ${{ secrets.NUGET_API_KEY }} \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate \
+          --no-symbols
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Summary
+      run: |
+        echo "## Prerelease Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: ${{ steps.get_version.outputs.PRERELEASE_VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Package**: FbaTemplates.${{ steps.get_version.outputs.PRERELEASE_VERSION }}.nupkg" >> $GITHUB_STEP_SUMMARY
+        echo "- **NuGet**: https://www.nuget.org/packages/FbaTemplates/${{ steps.get_version.outputs.PRERELEASE_VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **GitHub Prerelease**: ${{ steps.create_prerelease.outputs.html_url }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ⚠️ Prerelease - For testing only" >> $GITHUB_STEP_SUMMARY

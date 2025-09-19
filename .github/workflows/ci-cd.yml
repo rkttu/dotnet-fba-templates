@@ -1,0 +1,62 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  PROJECT_FILE: 'FbaTemplates.csproj'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_FILE }}
+
+    - name: Build project
+      run: dotnet build ${{ env.PROJECT_FILE }} --configuration Release --no-restore
+
+    - name: Pack NuGet package
+      run: dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --no-build --output ./artifacts
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: ./artifacts/*.nupkg
+        retention-days: 30
+
+    - name: Test template installation (dry run)
+      run: |
+        # Test if the templates can be installed locally
+        dotnet new install ./artifacts/*.nupkg
+        dotnet new list | grep -i fba || echo "Templates not found in list"
+        
+        # Test creating a simple console FBA
+        mkdir test-fba
+        cd test-fba
+        dotnet new console-fba --name TestApp
+        ls -la
+        cat TestApp.cs || echo "Template file not created"
+        
+        # Clean up
+        cd ..
+        rm -rf test-fba
+        dotnet new uninstall FbaTemplates
