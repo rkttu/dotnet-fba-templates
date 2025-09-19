@@ -14,10 +14,10 @@
     "symbols": {
         "Framework": {
             "type": "parameter",
-            "description": "The target framework for the project (e.g., net10.0-browser, net9.0-browser). Leave empty to use the latest available.",
+            "description": "The target framework for the project (e.g., net10.0-browser, net9.0-browser, net8.0-browser).",
             "datatype": "string",
-            "defaultValue": "",
-            "replaces": "NET_TFM_PARAM"
+            "defaultValue": "net10.0-browser",
+            "replaces": "NET_TFM"
         }
     }
 }

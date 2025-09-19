@@ -5,7 +5,7 @@
 #:property OverrideHtmlAssetPlaceholders=true
 #:property AllowUnsafeBlocks=true
 #if (Framework != "")
-#:property TargetFramework=NET_TFM_PARAM
+#:property TargetFramework=NET_TFM
 #endif
 
 // WebAssembly compilation cannot use NativeAOT compilation.
