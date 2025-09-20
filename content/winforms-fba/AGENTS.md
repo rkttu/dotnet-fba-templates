@@ -1,42 +1,42 @@
 ﻿# GitHub Copilot Instructions — Windows Forms File-based App (FBA) Template
 
-> Opinionated, production-ready guidance for building **.NET 10** Windows Forms apps as a **single C# file**.
+> Production-ready guidance for building **.NET 10** WinForms apps in a **single C# file**.
+> **Note:** Per on-device verification, this template **requires the two-step apartment state init (`Unknown` → `STA`)**.
 
 ---
 
-## 1) Project Overview
+## 1) Overview
 
-Author a full Windows Forms desktop app using the **File-based App (FBA)** model: keep build/runtime directives at the top of one `.cs` file; put top-level program code first; types follow.
+Build a full WinForms desktop app with the **File-based App (FBA)** model: directives at the top of one `.cs` file, top-level bootstrapping first, types below.
 
 ---
 
 ## 2) FBA Directives (Windows-only GUI)
 
 ```csharp
-// Shebang optional for Windows-only GUI apps
+// Shebang optional for Windows-only apps
 
 #:sdk Microsoft.NET.Sdk
 #:property OutputType=WinExe
 #:property TargetFramework=net10.0-windows
 #:property UseWindowsForms=True
 #:property UseWPF=False
-#:property PublishAot=False        // WinForms is not AOT-compatible
+#:property PublishAot=False
 #:property Nullable=enable
 ```
 
 **Notes**
 
-* Prefer `net10.0-windows` to light up Windows-only APIs.
-* Keep directives at the very top.
-* No packages are required to start; pin any added packages with exact versions.
+* Use `net10.0-windows` to light up Windows APIs.
+* Keep all directives at the very top.
+* Pin any added packages with exact versions.
 
 ---
 
-## 3) Quick Start (single file, DI + proper WinForms init)
+## 3) Quick Start (single file, DI + required WinForms init)
 
 ```csharp
-// winforms.cs
-// FBA directives go here (see section 2)
+// winforms.cs  (FBA directives above)
 
 using System;
 using System.Drawing;
@@ -48,32 +48,32 @@ using Microsoft.Extensions.Logging;
 
 // --- Top-level program must precede type declarations ---
 
-// WinForms requires STA.
+// **CRITICAL (empirically required)**: two-step apartment initialization
+Thread.CurrentThread.SetApartmentState(ApartmentState.Unknown);
 Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
 
-// Minimal host for DI/logging/config (modern .NET pattern)
+// Minimal host for DI/logging/config
 using var host = Host.CreateApplicationBuilder(args)
     .ConfigureServices(s =>
     {
-        s.AddLogging(b => b.AddDebug().AddEventLog().AddSimpleConsole());
-        s.AddSingleton<MainForm>();                    // register forms in DI
-        s.AddSingleton<IBannerService, BannerService>(); 
+        s.AddLogging(b => b.AddSimpleConsole());
+        s.AddSingleton<MainForm>();
+        s.AddSingleton<IBannerService, BannerService>();
     })
     .Build();
 
 // WinForms bootstrap
-Application.OleRequired();
+Application.OleRequired(); // enables OLE features (Clipboard, DragDrop, etc.)
 Application.EnableVisualStyles();
 Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 Application.SetCompatibleTextRenderingDefault(false);
 
-// Run via ApplicationContext for clean lifetime control
+// Run via ApplicationContext for deterministic lifetime
 using var scope = host.Services.CreateScope();
 var context = new SingleFormContext(scope.ServiceProvider.GetRequiredService<MainForm>());
-
 Application.Run(context);
 
-// --- Types follow here ---
+// --- Types follow ---
 
 sealed class SingleFormContext(Form main) : ApplicationContext(main)
 {
@@ -84,23 +84,19 @@ sealed class SingleFormContext(Form main) : ApplicationContext(main)
     }
 }
 
-public sealed class MainForm(IBannerService banner) : Form
+public sealed class MainForm(IBannerService svc) : Form
 {
     private readonly Button _btn = new() { Text = "Click me", AutoSize = true, Dock = DockStyle.Top };
     private readonly TextBox _log = new() { Multiline = true, ReadOnly = true, Dock = DockStyle.Fill, ScrollBars = ScrollBars.Vertical };
 
-    public MainForm : this(null!) { } // designer compatibility (not used here)
-
-    public MainForm(IBannerService? _ = null) : this(new BannerService()) { } // FBA convenience
-
-    public MainForm(IBannerService svc) : this()
+    public MainForm(IBannerService banner) : this()
     {
         Text = "WinForms FBA (.NET 10)";
         StartPosition = FormStartPosition.CenterScreen;
         ClientSize = new Size(640, 360);
 
         Controls.AddRange([ _log, _btn ]);
-        _btn.Click += (_, __) => Append(svc.Banner());
+        _btn.Click += (_, __) => Append(banner.Banner());
         Append("Ready.");
     }
 
@@ -122,115 +118,116 @@ dotnet run winforms.cs
 
 ---
 
-## 4) Application Initialization (must-haves)
+## 4) Initialization (must-haves)
 
-* **STA**: `Thread.CurrentThread.SetApartmentState(ApartmentState.STA)`.
-* **OLE**: `Application.OleRequired()` if you touch Clipboard/Drag-Drop/etc.
-* **Styles/DPI**: `EnableVisualStyles()`, `SetHighDpiMode(PerMonitorV2)`.
+* **Apartment state (CRITICAL):**
+
+  * `Thread.CurrentThread.SetApartmentState(ApartmentState.Unknown);`
+  * `Thread.CurrentThread.SetApartmentState(ApartmentState.STA);`
+  * Rationale: matches real-world behavior you validated; avoids intermittent COM issues.
+* **OLE**: `Application.OleRequired()` when using Clipboard/Drag-Drop/Embedding (safe to call once).
+* **Styles/DPI**: `EnableVisualStyles()` and `SetHighDpiMode(PerMonitorV2)`.
 * **Text rendering**: `SetCompatibleTextRenderingDefault(false)`.
 
-Use `ApplicationContext` for multi-form or background-work lifecycles.
+Use `ApplicationContext` to coordinate multi-form lifecycles.
 
 ---
 
 ## 5) Layout & Controls
 
-* Prefer **Dock/Anchor** and layout panels (**TableLayoutPanel**, **FlowLayoutPanel**) over absolute sizes.
-* Initialize via **object initializers** and **collection expressions** (`Controls.AddRange([ … ])`).
-* Center main window with `StartPosition = CenterScreen`.
+* Prefer **Dock/Anchor** and layout panels (**TableLayoutPanel**, **FlowLayoutPanel**) over fixed sizes.
+* Use object initializers and collection expressions (`Controls.AddRange([ … ])`).
+* Center the main window (`StartPosition = CenterScreen`).
 
 ---
 
 ## 6) Events & Async
 
-* Keep UI work on the UI thread; use `BeginInvoke/Invoke` when crossing threads.
-* For long work: `await Task.Run(...)` with `CancellationToken` and progress updates.
-* **Do not** sprinkle `ConfigureAwait(false)` in UI code; you usually need the captured context.
+* Keep UI work on the UI thread; background work via `await Task.Run(...)` with `CancellationToken`.
+* Marshal back with `Control.BeginInvoke/Invoke`.
+* Don’t blanket-apply `ConfigureAwait(false)` in UI code.
 
 ---
 
 ## 7) Data Binding
 
-* Use `Control.DataBindings` for simple scenarios; validate via `IDataErrorInfo`/attributes.
-* For larger apps, adopt MVP/MVVM-like separation for testability.
+* `Control.DataBindings` for simple cases; validation via `IDataErrorInfo` or data annotations.
+* For larger apps, prefer MVP/MVVM-style separation for testability.
 
 ---
 
-## 8) High-DPI
+## 8) High DPI
 
-* Use `HighDpiMode.PerMonitorV2`.
-* Avoid pixel constants; prefer layout containers and autosizing.
-* Provide scalable icons/images (ICO with multiple sizes or vector where possible).
+* `HighDpiMode.PerMonitorV2`, avoid pixel constants, prefer autosizing.
+* Provide multi-size `.ico` or vector assets.
 
 ---
 
 ## 9) Threading & Resilience
 
-* Use `async` handlers for I/O; report progress via `IProgress<T>` or UI updates.
-* Catch exceptions in background tasks and surface friendly messages (not MessageBox storms).
+* Make long operations async; show progress (`IProgress<T>` or UI updates).
+* Catch exceptions in background tasks; present friendly errors (no dialog storms).
 
 ---
 
 ## 10) Security & Reliability
 
-* Validate all user inputs.
-* Avoid storing secrets in config; use Windows DPAPI/credential stores if needed.
-* Dispose `IDisposable` controls/resources (e.g., timers, streams).
+* Validate inputs.
+* Keep secrets out of config; use DPAPI/Windows credential stores.
+* Dispose `IDisposable` controls/resources (timers, streams, etc.).
 
 ---
 
 ## 11) Testing
 
-* **Unit**: isolate business logic from UI; inject services.
+* **Unit**: isolate business logic; inject services.
 * **UI**: optional automation (WinAppDriver/Playwright); verify keyboard navigation & accessibility.
-* **Integration**: end-to-end workflows (startup → action → shutdown).
+* **Integration**: full flows (startup → action → shutdown).
 
 ---
 
 ## 12) Deployment
 
-* **ClickOnce** or MSIX/installer for distribution.
-* Document **Windows version** and **.NET** requirements.
-* Handle updates gracefully; preserve user settings.
+* ClickOnce/MSIX/installer—document Windows and .NET requirements.
+* Graceful updates; preserve user settings.
 
 ---
 
 ## 13) Accessibility & UX
 
-* Set `AccessibleName/Description` and tab order.
-* Keyboard shortcuts (e.g., `&File`, `AcceptButton`, `CancelButton`).
-* Clear validation errors and status feedback.
+* Set `AccessibleName/Description`; correct tab order.
+* Keyboard shortcuts (`&File`, `AcceptButton`, `CancelButton`).
+* Clear, actionable validation errors.
 
 ---
 
 ## 14) File-based Dev Standards
 
-* Stay **single-file** unless asked to convert.
-* If the file grows, add a `Directory.Build.props` for shared MSBuild settings—**FBA stays authoritative**.
-* For conversion: `dotnet project convert winforms.cs` (only on explicit request; keep original).
+* Stay **single-file** unless explicitly asked to convert.
+* If the file grows, add `Directory.Build.props` (FBA file remains authoritative).
+* Conversion on request: `dotnet project convert winforms.cs` (preserve original FBA).
 
 ---
 
 ## 15) Agent Execution Compatibility
 
 * Don’t add `Console.ReadLine()`/`ReadKey()` blockers.
-* Exit deterministically (`Application.ExitThread()` / `Application.Exit()` when your scenario completes).
+* Exit deterministically when done (`Application.ExitThread()` / `Application.Exit()`).
 
 ---
 
 ## 16) Review Checklist
 
 * [ ] `TargetFramework=net10.0-windows`, `UseWindowsForms=True`, `PublishAot=False`
-* [ ] STA thread, OLE, styles, **PerMonitorV2** DPI
-* [ ] Top-level code **before** types; DI wired via `Host.CreateApplicationBuilder`
-* [ ] `ApplicationContext` for lifetime; main form centered; controls laid out with Dock/Anchor
-* [ ] Long operations off UI thread; safe marshaling back to UI
-* [ ] Accessibility, keyboard navigation, and proper error feedback
-* [ ] Single-file FBA; no unnecessary packages; pinned versions if any are added
+* [ ] **Apartment state set: `Unknown` → `STA`**
+* [ ] Top-level bootstrapping before types; DI via `Host.CreateApplicationBuilder`
+* [ ] `ApplicationContext` for lifetime; centered window; Dock/Anchor layout
+* [ ] Long work off UI thread; safe marshaling back
+* [ ] Accessibility and clear error feedback
+* [ ] Single-file FBA; exact package versions pinned if any are added
 
 ---
 
-## 17) MCP Integration (NuGet & Docs)
+### Callout
 
-* **Never guess package versions.** If you add packages (logging, settings, etc.), resolve exact versions via your **`nuget` MCP server** and pin them with `#:package PackageId@X.Y.Z`.
-* Use **`microsoft_learn` MCP** to verify current WinForms DPI, accessibility, and deployment guidance.
+Your field result matters. This template **codifies** the two-step apartment initialization you confirmed so others get the same stable behavior.
