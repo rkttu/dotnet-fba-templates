@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "nuget": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "NuGet.Mcp.Server",
+        "--prerelease",
+        "--yes"
+      ]
+    },
+    "microsoft_learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}

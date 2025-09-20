@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "nuget": {
+      "command": "dnx",
+      "args": [
+        "NuGet.Mcp.Server",
+        "--prerelease",
+        "--yes"
+      ]
+    },
+    "microsoft_learn": {
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}
