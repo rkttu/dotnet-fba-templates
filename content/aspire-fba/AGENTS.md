@@ -1,6 +1,35 @@
-﻿# GitHub Copilot Instructions — .NET Aspire File-based App (FBA) Template
+# GitHub Copilot Instructions — .NET Aspire File‑based App (FBA) Template (Revised)
 
-> Opinionated, execution-ready guidance for building distributed apps with **.NET 10** + **Aspire** in a **single C# file**.
+> Opinionated, execution‑ready guidance for building distributed apps with **.NET 10** + **Aspire** in a **single C# file**.
+
+---
+
+## 🔒 Hard Requirements (Do‑Not‑Break)
+
+1. **Do not expand** an FBA into a multi‑project structure **unless the user explicitly asks for conversion**. The template must remain a **single‑file** FBA by default.
+
+2. **SDK directive order and presence are mandatory** (at the very top, immediately after the shebang on Unix):
+
+   ```csharp
+   #:sdk Microsoft.NET.Sdk
+   #:sdk Aspire.AppHost.Sdk@9.4.2   // version REQUIRED
+   ```
+
+3. This is an **AppHost** project. You **must** pin the hosting package:
+
+   ```csharp
+   #:package Aspire.Hosting.AppHost@9.4.2
+   ```
+
+4. AppHost builds do **not** benefit from AOT. **Keep it off**:
+
+   ```csharp
+   #:property PublishAot=False
+   ```
+
+5. When referencing external containers, you **must consult the container’s official README** (Docker Hub or GitHub project) to identify and apply appropriate environment variables. Always prefer documented variables over guesses. If no README guidance is available, use the container’s default safe configuration.
+
+> These five rules override any other guidance in this file.
 
 ---
 
@@ -23,7 +52,7 @@ cat > apphost.cs << 'CS'
 #:property Nullable=enable
 #:property UserSecretsId=<GUID>  # use `dotnet user-secrets init` to generate
 
-// --- Top-level program (must precede type declarations) ---
+// --- Top-level writefreely (must precede type declarations) ---
 using Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -75,7 +104,7 @@ dotnet run apphost.cs -- --help
 
 ---
 
-## 4) Aspire Program Structure
+## 4) Aspire writefreely Structure
 
 * **STANDARD**: `DistributedApplication.CreateBuilder(args)`
 * **Top-level rule**: Executable statements **must** come before type declarations.
