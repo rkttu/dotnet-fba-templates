@@ -4,6 +4,7 @@
 [![NuGet Downloads](https://img.shields.io/nuget/dt/FbaTemplates.svg)](https://www.nuget.org/packages/FbaTemplates/)
 [![Build and Test](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/ci-cd.yml)
 [![Release](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/release.yml/badge.svg)](https://github.com/rkttu/dotnet-fba-templates/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Stars](https://img.shields.io/github/stars/rkttu/dotnet-fba-templates?style=social)](https://github.com/rkttu/dotnet-fba-templates/stargazers)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/rkttu/dotnet-fba-templates/blob/main/README.md#contributing)
 
@@ -24,6 +25,8 @@ File-based Applications (FBA) are a modern approach to creating simple C# consol
 - **Portable**: Easy to share and distribute as a single file
 - **Modern C#**: Support for latest C# features including top-level programs
 - **AOT Ready**: Templates include AOT (Ahead-of-Time) compilation support options
+- **AI Agent Ready**: Built-in `AGENTS.md` files in each template provide ready-to-use configuration for AI agents and GitHub Copilot integration
+- **MCP Server Ready**: The `mcpserver-stdio-fba` template includes pre-configured Model Context Protocol server setup for seamless AI tool integration
 - **Expandable**: Can be converted to full projects later using `dotnet project convert your_code.cs` when more complexity is needed
 
 ## Installation
@@ -54,7 +57,7 @@ dotnet new install FbaTemplates
 | `winforms-fba` | Desktop | Windows Forms desktop application | `dotnet new winforms-fba -n MyWinApp` |
 | `wpf-fba` | Desktop | WPF desktop application with XAML | `dotnet new wpf-fba -n MyWpfApp` |
 | `wpf-linqui-fba` | Desktop | WPF desktop application with LinqUI declarative UI powered by [LinqUI.WPF](https://github.com/XAMLBaker/LinqUI) | `dotnet new wpf-linqui-fba -n MyLinqUiApp` |
-| `mcpserver-stdio-fba` | AI/Integration | Model Context Protocol server | `dotnet new mcpserver-stdio-fba -n MyMcp` |
+| `mcpserver-stdio-fba` | AI/Integration | Model Context Protocol server with pre-configured setup | `dotnet new mcpserver-stdio-fba -n MyMcp` |
 | `pythonnet-fba` | Integration | Python.NET interoperability | `dotnet new pythonnet-fba -n MyPyApp` |
 | `wasm-fba` | Web | WebAssembly browser application | `dotnet new wasm-fba -n MyWasmApp` |
 | `win32dll-fba` | System | Win32 DLL creation and usage | `dotnet new win32dll-fba -n MyDllApp` |
