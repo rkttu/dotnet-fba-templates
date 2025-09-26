@@ -53,6 +53,7 @@ dotnet new install FbaTemplates
 | `awscdk-fba` | Cloud | AWS CDK Infrastructure as Code | `dotnet new awscdk-fba -n MyInfra` |
 | `winforms-fba` | Desktop | Windows Forms desktop application | `dotnet new winforms-fba -n MyWinApp` |
 | `wpf-fba` | Desktop | WPF desktop application with XAML | `dotnet new wpf-fba -n MyWpfApp` |
+| `wpf-linqui-fba` | Desktop | WPF desktop application with LinqUI declarative UI powered by [LinqUI.WPF](https://github.com/XAMLBaker/LinqUI) | `dotnet new wpf-linqui-fba -n MyLinqUiApp` |
 | `mcpserver-stdio-fba` | AI/Integration | Model Context Protocol server | `dotnet new mcpserver-stdio-fba -n MyMcp` |
 | `pythonnet-fba` | Integration | Python.NET interoperability | `dotnet new pythonnet-fba -n MyPyApp` |
 | `wasm-fba` | Web | WebAssembly browser application | `dotnet new wasm-fba -n MyWasmApp` |
@@ -96,6 +97,9 @@ dotnet new mvc-fba -n MyWebApp
 
 # Desktop application (Windows)
 dotnet new winforms-fba -n MyDesktopApp
+
+# WPF application with declarative UI (Windows)
+dotnet new wpf-linqui-fba -n MyWpfApp
 
 # Cloud-native application
 dotnet new aspire-fba -n MyCloudApp
@@ -225,6 +229,12 @@ Example:
 ```bash
 dotnet new console-fba -n MyApp --EnableAot true
 ```
+
+## Template Documentation
+
+For detailed information about specific templates, see our [template documentation](docs/):
+
+- **[WPF LinqUI Template](docs/wpf-linqui-fba.md)** - Complete guide to building XAML-free WPF applications with declarative UI
 
 ## Contributing
 
