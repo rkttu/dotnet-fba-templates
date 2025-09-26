@@ -26,7 +26,7 @@ File-based Applications (FBA) are a modern approach to creating simple C# consol
 - **Modern C#**: Support for latest C# features including top-level programs
 - **AOT Ready**: Templates include AOT (Ahead-of-Time) compilation support options
 - **AI Agent Ready**: Built-in `AGENTS.md` files in each template provide ready-to-use configuration for AI agents and GitHub Copilot integration
-- **MCP Server Ready**: The `mcpserver-stdio-fba` template includes pre-configured Model Context Protocol server setup for seamless AI tool integration
+- **MCP Configuration Ready**: Each template includes pre-configured `mcp.json` files for VS Code and Cursor with Microsoft Learn and NuGet MCP server settings built-in
 - **Expandable**: Can be converted to full projects later using `dotnet project convert your_code.cs` when more complexity is needed
 
 ## Installation
@@ -57,7 +57,7 @@ dotnet new install FbaTemplates
 | `winforms-fba` | Desktop | Windows Forms desktop application | `dotnet new winforms-fba -n MyWinApp` |
 | `wpf-fba` | Desktop | WPF desktop application with XAML | `dotnet new wpf-fba -n MyWpfApp` |
 | `wpf-linqui-fba` | Desktop | WPF desktop application with LinqUI declarative UI powered by [LinqUI.WPF](https://github.com/XAMLBaker/LinqUI) | `dotnet new wpf-linqui-fba -n MyLinqUiApp` |
-| `mcpserver-stdio-fba` | AI/Integration | Model Context Protocol server with pre-configured setup | `dotnet new mcpserver-stdio-fba -n MyMcp` |
+| `mcpserver-stdio-fba` | AI/Integration | Model Context Protocol server implementation | `dotnet new mcpserver-stdio-fba -n MyMcp` |
 | `pythonnet-fba` | Integration | Python.NET interoperability | `dotnet new pythonnet-fba -n MyPyApp` |
 | `wasm-fba` | Web | WebAssembly browser application | `dotnet new wasm-fba -n MyWasmApp` |
 | `win32dll-fba` | System | Win32 DLL creation and usage | `dotnet new win32dll-fba -n MyDllApp` |
