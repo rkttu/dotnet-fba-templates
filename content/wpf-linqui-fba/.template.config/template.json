@@ -3,7 +3,7 @@
     "author": "lukwire",
     "classifications": [ "Common", "WPF", "FBA" ],
     "identity": "wpf-linqui-fba",
-    "name": "WPF Application (File-based App)",
+    "name": "WPF LinqUI Application (File-based App)",
     "shortName": "wpf-linqui-fba",
     "sourceName": "Program",
     "preferNameDirectory": true,
