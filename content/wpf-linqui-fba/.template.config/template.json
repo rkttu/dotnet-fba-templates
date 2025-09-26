@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "lukwire",
+    "classifications": [ "Common", "WPF", "FBA" ],
+    "identity": "wpf-linqui-fba",
+    "name": "WPF Application (File-based App)",
+    "shortName": "wpf-linqui-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": true,
+    "tags": {
+        "language": "C#",
+        "type": "project"
+    },
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project (e.g., net10.0-windows).",
+            "datatype": "string",
+            "defaultValue": "net10.0-windows",
+            "replaces": "NET_TFM_WINDOWS"
+        }
+    }
+}
