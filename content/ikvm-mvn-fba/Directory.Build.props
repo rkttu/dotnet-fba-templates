@@ -1,0 +1,5 @@
+<Project>
+    <ItemGroup>
+        <MavenReference Include="org.jsoup:jsoup" Version="1.17.2" />
+    </ItemGroup>
+</Project>
