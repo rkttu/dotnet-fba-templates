@@ -52,6 +52,7 @@ dotnet new install FbaTemplates
 | `console-fba` | Console | Basic console application | `dotnet new console-fba -n MyApp` |
 | `minimal-api-fba` | Web | Lightweight web API using Minimal APIs | `dotnet new minimal-api-fba -n MyApi` |
 | `mvc-fba` | Web | Full-featured MVC web application | `dotnet new mvc-fba -n MyMvcApp` |
+| `ts-react-fba` | Web | TypeScript React + Minimal API application | `dotnet new ts-react-fba -n MyReactApp` |
 | `aspire-fba` | Cloud | .NET Aspire cloud-native orchestrator | `dotnet new aspire-fba -n MyAspireApp` |
 | `awscdk-fba` | Cloud | AWS CDK Infrastructure as Code | `dotnet new awscdk-fba -n MyInfra` |
 | `winforms-fba` | Desktop | Windows Forms desktop application | `dotnet new winforms-fba -n MyWinApp` |
@@ -59,6 +60,7 @@ dotnet new install FbaTemplates
 | `wpf-linqui-fba` | Desktop | WPF desktop application with LinqUI declarative UI powered by [LinqUI.WPF](https://github.com/XAMLBaker/LinqUI) | `dotnet new wpf-linqui-fba -n MyLinqUiApp` |
 | `mcpserver-stdio-fba` | AI/Integration | Model Context Protocol server implementation | `dotnet new mcpserver-stdio-fba -n MyMcp` |
 | `pythonnet-fba` | Integration | Python.NET interoperability | `dotnet new pythonnet-fba -n MyPyApp` |
+| `ikvm-mvn-fba` | Integration | IKVM Java + Maven interoperability | `dotnet new ikvm-mvn-fba -n MyJavaApp` |
 | `wasm-fba` | Web | WebAssembly browser application | `dotnet new wasm-fba -n MyWasmApp` |
 | `win32dll-fba` | System | Win32 DLL creation and usage | `dotnet new win32dll-fba -n MyDllApp` |
 | `win32rundll-fba` | System | RunDLL32 compatible DLL | `dotnet new win32rundll-fba -n MyRunDll` |
@@ -98,6 +100,9 @@ dotnet new minimal-api-fba -n MyApi
 # MVC web application
 dotnet new mvc-fba -n MyWebApp
 
+# TypeScript React web application
+dotnet new ts-react-fba -n MyReactApp
+
 # Desktop application (Windows)
 dotnet new winforms-fba -n MyDesktopApp
 
@@ -106,6 +111,9 @@ dotnet new wpf-linqui-fba -n MyWpfApp
 
 # Cloud-native application
 dotnet new aspire-fba -n MyCloudApp
+
+# Java integration with Maven
+dotnet new ikvm-mvn-fba -n MyJavaApp
 ```
 
 ### Running Existing File-based Applications
