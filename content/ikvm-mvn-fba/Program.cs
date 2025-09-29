@@ -1,6 +1,7 @@
 #:property PublishAot=False
 
 #:package IKVM.Maven.Sdk@1.9.4
+#:property TargetFramework=NET_TFM
 
 // IKVM alias
 using JJsoup = org.jsoup.Jsoup;
