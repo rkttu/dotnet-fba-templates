@@ -2,7 +2,7 @@
   "name": "ts-react-fba",
   "version": "1.0.0",
   "description": "TypeScript React FBA Test Project",
-  "main": "wwwroot/js/app.js",
+  "main": "wwwroot/assets/app.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",

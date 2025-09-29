@@ -1,4 +1,4 @@
-﻿# GitHub Copilot Instructions — Minimal API File-based App (FBA) Template
+﻿# GitHub Copilot Instructions — TypeScript/React Add-On for Minimal API FBA (MSBuild-Driven)
 
 > Opinionated, execution-ready guidance for building **.NET 10** Minimal APIs as a **single C# file**.
 
@@ -341,6 +341,238 @@ public sealed record User(Guid? Id, string Name);
 
 ---
 
+## 24) TypeScript + React (MSBuild-integrated, FBA-friendly)
+
+This add-on shows how to compile a small **React (TypeScript)** front-end during `dotnet build/publish` using **Microsoft.TypeScript.MSBuild** — without converting the FBA into a full project. We keep the app single-file (`api.cs`) and place MSBuild config in **Directory.Build.props/targets** next to it.
+
+> Why this approach
+>
+> * **Deterministic**: CI/CD calls `dotnet build/publish` and gets front-end assets.
+> * **Agent-friendly**: No ad-hoc shell steps; one entry point.
+> * **Isolated**: You can later swap to Vite/Webpack with minimal MSBuild changes.
+
+### 24.1 Prerequisites
+
+* **Node.js** (runtime) is required; the NuGet package wires MSBuild targets but does **not** replace Node.
+* Pin exact package versions via the **`nuget` MCP server** (see §18). Example directive (place at top of `api.cs`):
+
+```csharp
+#:package Microsoft.TypeScript.MSBuild@<ExactVersion>   // pin via MCP nuget
+```
+
+### 24.2 Minimal layout (co-located with FBA)
+
+```
+/
+├── api.cs                     # your Minimal API (FBA)
+├── Directory.Build.props      # TypeScript/MSBuild settings
+├── Directory.Build.targets    # build/publish hooks
+├── tsconfig.json              # TS compiler options (React)
+├── package.json               # NPM deps for React/TS type packages if desired
+├── src/                       # TypeScript/React sources
+│   ├── main.tsx
+│   └── app.tsx
+└── wwwroot/                   # Build output target for static files
+    └── index.html
+```
+
+> You can keep `package.json` very small (types only) because the **compiler is driven by MSBuild**. If you prefer a toolchain (Vite/Webpack), swap §24.5 “B” later.
+
+### 24.3 ASP.NET static file plumbing (in `api.cs`)
+
+Add static files so the built front-end is served from `/`:
+
+```csharp
+// after var app = builder.Build();
+app.UseDefaultFiles();       // serves wwwroot/index.html by default
+app.UseStaticFiles();        // serves files under wwwroot/*
+```
+
+### 24.4 MSBuild settings (no .csproj needed)
+
+**Directory.Build.props**
+
+```xml
+<Project>
+  <!-- Let TypeScript targets light up -->
+  <PropertyGroup>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <TypeScriptCompileOnBuild>true</TypeScriptCompileOnBuild>
+    <TypeScriptNoEmitOnError>true</TypeScriptNoEmitOnError>
+
+    <!-- Emit settings (React + modern ESM) -->
+    <TypeScriptTarget>ES2022</TypeScriptTarget>
+    <TypeScriptModule>ESNext</TypeScriptModule>
+    <TypeScriptJSXEmit>ReactJSX</TypeScriptJSXEmit>
+
+    <!-- Where compiled JS goes -->
+    <TypeScriptOutDir>wwwroot/assets</TypeScriptOutDir>
+
+    <!-- Optional strictness -->
+    <TypeScriptStrict>true</TypeScriptStrict>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+  </PropertyGroup>
+
+  <!-- Tell MSBuild what to compile -->
+  <ItemGroup>
+    <TypeScriptCompile Include="src\**\*.ts" />
+    <TypeScriptCompile Include="src\**\*.tsx" />
+  </ItemGroup>
+
+  <!-- Static site bits included in publish -->
+  <ItemGroup>
+    <Content Include="wwwroot\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
+```
+
+**Directory.Build.targets**
+
+```xml
+<Project>
+  <!-- Ensure Node is present before TS compile -->
+  <Target Name="VerifyNode" BeforeTargets="TypeScriptCompile">
+    <Exec Command="node --version" IgnoreExitCode="false" />
+  </Target>
+
+  <!-- Hook TS compile into dotnet build/publish -->
+  <Target Name="ClientBuild" DependsOnTargets="TypeScriptCompile"
+          BeforeTargets="ResolveReferences" />
+
+  <Target Name="ClientPublish" DependsOnTargets="TypeScriptCompile"
+          BeforeTargets="ComputeFilesToPublish" />
+</Project>
+```
+
+### 24.5 tsconfig + two build modes
+
+**tsconfig.json (React, ESM, strict)**
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "sourceMap": true,
+    "outDir": "wwwroot/assets",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "noEmitOnError": true
+  },
+  "include": ["src/**/*"]
+}
+```
+
+**A) Pure MSBuild/tsc mode (no bundler)**
+
+* Pros: zero extra tools; simplest to wire.
+* Cons: no tree-shaking/bundling; browser must support modern ESM and import maps (or keep it small).
+
+**B) Bundler mode (optional)**
+If you need Vite/Webpack/Rspack, replace `ClientBuild/ClientPublish` with:
+
+```xml
+<Target Name="ClientBuildBundler" BeforeTargets="ResolveReferences">
+  <Exec Command="npm ci" />
+  <Exec Command="npm run build" />
+</Target>
+
+<Target Name="ClientPublishBundler" BeforeTargets="ComputeFilesToPublish"
+        DependsOnTargets="ClientBuildBundler" />
+```
+
+…and set `package.json` scripts. Output still goes to `wwwroot`.
+
+### 24.6 Sample front-end
+
+**wwwroot/index.html** (loads ESM entry)
+
+```html
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>FBA + React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/assets/main.js"></script>
+  </body>
+</html>
+```
+
+**src/main.tsx**
+
+```ts
+import { createRoot } from "react-dom/client";
+import { App } from "./app";
+
+createRoot(document.getElementById("root")!).render(<App />);
+```
+
+**src/app.tsx**
+
+```ts
+import { useEffect, useState } from "react";
+
+export function App() {
+  const [now, setNow] = useState<string>("loading...");
+  useEffect(() => {
+    fetch("/api/v1/time").then(r => r.json()).then(x => setNow(x.now));
+  }, []);
+  return (
+    <main style={{ fontFamily: "system-ui", padding: 24 }}>
+      <h1>Minimal API + React (TS)</h1>
+      <p>Server time: {now}</p>
+    </main>
+  );
+}
+```
+
+**package.json** (types only; optional)
+
+```json
+{
+  "private": true,
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
+```
+
+> If you stay in **pure MSBuild** mode, `typescript` here only controls editor typings; **MSBuild invokes its own compiler** from `Microsoft.TypeScript.MSBuild`. Node is still required for the compiler runtime.
+
+### 24.7 Running
+
+```bash
+# One command compiles TS and runs the API
+dotnet run api.cs
+# or build only
+dotnet build
+# or publish (assets go under publish/wwwroot)
+dotnet publish -c Release
+```
+
+### 24.8 Testing & hardening
+
+* Add an integration test that hits `/` (serves `index.html`) and `/assets/main.js` after `dotnet build`.
+* For production, prefer **bundler mode** (§24.5-B) for code-split, minification, and cache busting.
+* Use a **content hash** in asset filenames (via bundler) or append a version query (`/assets/main.js?v=…`) and set long-cache headers.
+
+### 24.9 Troubleshooting
+
+* **`TypeScriptCompile` target not running** → Ensure `Directory.Build.props/targets` are in the **same directory** (or ancestor) as `api.cs`.
+* **Node not found** → Install Node, or set PATH in CI.
+* **Files not served** → Verify `app.UseDefaultFiles(); app.UseStaticFiles();` and that outputs land in `wwwroot/*`.
+* **Interop issues with older browsers** → Use bundler + transpilation to ES2017/ES2018 and polyfills as needed.
+
+---
+
 ### Review Checklist
 
 * [ ] `TargetFramework=net10.0`, `Nullable=enable`; AOT choice is deliberate
@@ -349,3 +581,13 @@ public sealed record User(Guid? Id, string Name);
 * [ ] ProblemDetails + exception handler; HTTPS, rate limiting as needed
 * [ ] Packages (if any) are **pinned via MCP `nuget`**; no TFM downgrades
 * [ ] Deterministic outputs; graceful shutdown; health endpoints
+
+---
+
+### Review Checklist (TS/React)
+
+* [ ] `Microsoft.TypeScript.MSBuild` pinned via MCP `nuget` (no floating versions)
+* [ ] `Directory.Build.props/targets` present; `TypeScriptCompile` runs on build/publish
+* [ ] Static files enabled; `wwwroot/index.html` loads ESM entry
+* [ ] CI uses only `dotnet build/publish` (optionally `npm ci` in bundler mode)
+* [ ] Production uses bundler (hashing, minify, split) and correct cache headers
