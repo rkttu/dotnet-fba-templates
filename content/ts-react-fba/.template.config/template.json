@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "rkttu",
+    "classifications": [ "Web", "ASP.NET", "TypeScript", "React" ],
+    "identity": "ts-react-fba",
+    "name": "TypeScript React + Minimal API (File-based App)",
+    "shortName": "ts-react-fba",
+    "sourceName": "Program",
+    "preferNameDirectory": true,
+    "tags": {
+        "language": "C#",
+        "type": "project"
+    },
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project (e.g., net10.0).",
+            "datatype": "string",
+            "defaultValue": "net10.0",
+            "replaces": "NET_TFM"
+        }
+    }
+}

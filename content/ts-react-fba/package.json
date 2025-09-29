@@ -1,0 +1,20 @@
+{
+  "name": "ts-react-fba",
+  "version": "1.0.0",
+  "description": "TypeScript React FBA Test Project",
+  "main": "wwwroot/js/app.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "dotnet run Program.cs"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}
